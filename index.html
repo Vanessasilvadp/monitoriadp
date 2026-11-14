@@ -380,7 +380,11 @@
     {id:'fgts-digital', nome:'FGTS Digital', orgao:'MTE', url:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital', ativo:true},
     {id:'fgts-digital-faq', nome:'FAQ FGTS Digital', orgao:'MTE', url:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/perguntas-frequentes', ativo:true},
     {id:'esocial-faq', nome:'FAQ eSocial', orgao:'eSocial', url:'https://www.gov.br/esocial/pt-br/empresas/perguntas-frequentes/perguntas-frequentes-producao-empresas-e-ambiente-de-testes', ativo:true},
-    {id:'dou', nome:'Diário Oficial da União', orgao:'Imprensa Nacional', url:'https://www.gov.br/imprensanacional/pt-br', ativo:true}
+    {id:'dou', nome:'Diário Oficial da União', orgao:'Imprensa Nacional', url:'https://www.gov.br/imprensanacional/pt-br', ativo:true},
+    {id:'constituicao', nome:'Constituição Federal', orgao:'Planalto', url:'https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm', ativo:true},
+    {id:'clt', nome:'CLT (Decreto-Lei 5.452)', orgao:'Planalto', url:'https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm', ativo:true},
+    {id:'senado', nome:'Senado Federal', orgao:'Senado Federal', url:'https://www12.senado.leg.br/', ativo:true},
+    {id:'stf', nome:'STF', orgao:'STF', url:'https://portal.stf.jus.br/', ativo:true}
   ];
 
   var DOU_KEYWORDS = ["previdência social","INSS","RGPS","RPPS","benefício previdenciário","aposentadoria",
@@ -411,7 +415,10 @@
     {fonteId:'credito-trabalhador', orgao:'MTE', titulo:'Publicada a versão 2.0 do Manual Operacional do Empregador - Programa Crédito do Trabalhador', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Atualização do manual operacional com orientações revisadas para os empregadores participantes do programa.', palavrasChave:['MTE'], dataPublicacao:'2025-05-16', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/manual-e-documentacao-tecnica-old/manual-operacional-do-empregador-programa-credito-do-trabalhador-v2-16-05-25.pdf'},
     {fonteId:'dou', orgao:'MPS', titulo:'Portaria Interministerial MPS/MF nº 13, de 9 de janeiro de 2026', secao:'Seção 1', tipo:'legislacao', prioridade:'alta', resumo:'Reajusta em 3,90% os benefícios pagos pelo INSS e atualiza a tabela de contribuição do RGPS, o teto previdenciário e o salário-família para 2026.', palavrasChave:['MPS','INSS','RGPS','previdência social','aposentadoria'], dataPublicacao:'2026-01-12', link:'https://www.in.gov.br/web/dou/-/portaria-interministerial-mps/mf-n-13-de-9-de-janeiro-de-2026-680382603'},
     {fonteId:'dou', orgao:'MTE', titulo:'Portaria MTE nº 1.419, de 27 de agosto de 2024', secao:'Seção 1', tipo:'legislacao', prioridade:'alta', resumo:'Aprova nova redação do capítulo 1.5 (Gerenciamento de Riscos Ocupacionais) e altera o Anexo I da NR-1, incluindo os riscos psicossociais relacionados ao trabalho.', palavrasChave:['NR','MTE','trabalho'], dataPublicacao:'2024-08-28', link:'https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/sst-portarias/2024/portaria-mte-no-1-419-nr-01-gro-nova-redacao.pdf'},
-    {fonteId:'dou', orgao:'MTE', titulo:'Edital nº 3/2025 (FGTS Digital)', secao:'Seção 3', tipo:'procedimento', prioridade:'baixa', resumo:'Publicação de edital relacionado ao FGTS Digital no Diário Oficial da União.', palavrasChave:['FGTS','MTE'], dataPublicacao:'2025-11-27', link:'https://www.in.gov.br/web/dou/-/edital-n-3/2025-671495834'}
+    {fonteId:'dou', orgao:'MTE', titulo:'Edital nº 3/2025 (FGTS Digital)', secao:'Seção 3', tipo:'procedimento', prioridade:'baixa', resumo:'Publicação de edital relacionado ao FGTS Digital no Diário Oficial da União.', palavrasChave:['FGTS','MTE'], dataPublicacao:'2025-11-27', link:'https://www.in.gov.br/web/dou/-/edital-n-3/2025-671495834'},
+    {fonteId:'constituicao', orgao:'Congresso Nacional', titulo:'Emenda Constitucional nº 141/2026 — fim progressivo da escala 6x1', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'Promulgada em 16/10/2026, altera o art. 7º da Constituição para reduzir progressivamente a jornada semanal máxima a 40 horas e garantir ao trabalhador dois dias de descanso remunerado por semana, extinguindo a escala 6x1. Impacto direto no controle de jornada e nas escalas de trabalho.', palavrasChave:['trabalho','CLT'], dataPublicacao:'2026-10-16', link:'https://legis.senado.leg.br/norma/44184944/publicacao/44189027'},
+    {fonteId:'senado', orgao:'Senado Federal', titulo:'CCJ aprova relatório favorável à PEC do fim da escala 6x1', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'Comissão de Constituição e Justiça do Senado aprovou parecer favorável à proposta de emenda constitucional que extingue a jornada de trabalho no regime 6x1, etapa anterior à promulgação da EC 141/2026.', palavrasChave:['trabalho','CLT'], dataPublicacao:'2026-08-27', link:'https://www12.senado.leg.br/noticias/materias/2026/08/27/pec-do-fim-da-escala-6x1-ja-conta-com-relatorio-favoravel-na-ccj'},
+    {fonteId:'stf', orgao:'STF', titulo:'STF retira suspensão de processos sobre pejotização na 1ª instância e nos TRTs', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'Ministro Gilmar Mendes retirou a suspensão nacional de processos que discutem a validade de contratos de pessoa jurídica (pejotização) em primeira instância e nos Tribunais Regionais do Trabalho, liberando o andamento de ações sobre reconhecimento de vínculo empregatício.', palavrasChave:['trabalho','CLT'], dataPublicacao:'2026-06-18', link:'https://noticias.stf.jus.br/postsnoticias/stf-retira-suspensao-de-processos-sobre-pejotizacao-na-primeira-instancia-e-nos-trts/'}
   ];
 
   var SOURCE_NAME = {};
@@ -465,7 +472,7 @@
   // whatever a browser already has saved (e.g. swapping placeholder data for real
   // publications). Browsers on an older version get their reports rebuilt from the
   // current SEED_POOL instead of keeping their stale saved data.
-  var DATA_VERSION = 'real-publications-v1';
+  var DATA_VERSION = 'real-publications-v2';
 
   function buildInitialReports(){
     // Build an initial history using each publication's real date. The most recent
@@ -576,11 +583,16 @@
   function renderExecSummary(){
     var list = document.getElementById('execList');
     var weekAgo = todayISO(-7);
+    // Uses the same criterion as the summary cards above (detection date, not the
+    // publication's original date): this is what the tracker found recently, which
+    // is what "new" means for a monitoring tool, even when the underlying publication
+    // itself is older. Keeping both in sync avoids showing "4 novas hoje" in the cards
+    // right next to "nenhuma novidade" here.
     var top = state.reports
-      .filter(function(r){return r.status !== 'arquivado' && r.dataPublicacao >= weekAgo;})
+      .filter(function(r){return r.status !== 'arquivado' && r.dataDeteccao.slice(0,10) >= weekAgo;})
       .sort(function(a,b){
         var order = {alta:0, media:1, baixa:2};
-        return order[a.prioridade]-order[b.prioridade] || b.dataPublicacao.localeCompare(a.dataPublicacao);
+        return order[a.prioridade]-order[b.prioridade] || b.dataDeteccao.localeCompare(a.dataDeteccao);
       })
       .slice(0,5);
     list.innerHTML = '';
@@ -590,7 +602,7 @@
     }
     top.forEach(function(r){
       var li = document.createElement('li');
-      li.innerHTML = '<span class="tag">' + r.prioridade + '</span><span>' + escapeHtml(r.titulo) + ' <span style="color:rgba(255,255,255,.6)">— ' + escapeHtml(r.orgao) + ', ' + fmtDate(r.dataPublicacao) + '</span></span>';
+      li.innerHTML = '<span class="tag">' + r.prioridade + '</span><span>' + escapeHtml(r.titulo) + ' <span style="color:rgba(255,255,255,.6)">— ' + escapeHtml(r.orgao) + ', publicado em ' + fmtDate(r.dataPublicacao) + '</span></span>';
       list.appendChild(li);
     });
   }
@@ -617,8 +629,9 @@
       if(r.dataDeteccao.slice(0,10) === today && r.status === 'novo') tr.className = 'is-new';
       var tipoLabel = {legislacao:'Legislação', norma:'Norma', procedimento:'Procedimento', noticia:'Notícia'}[r.tipo] || r.tipo;
       var prioClass = 'badge-' + r.prioridade;
+      var detectadoTitle = 'Detectado em ' + fmtDateTime(r.dataDeteccao);
       tr.innerHTML =
-        '<td class="date-cell">' + fmtDate(r.dataPublicacao) + '</td>' +
+        '<td class="date-cell" title="' + escapeHtml(detectadoTitle) + '">' + fmtDate(r.dataPublicacao) + '</td>' +
         '<td>' + escapeHtml(r.orgao) + '</td>' +
         '<td class="titulo-cell"><a href="' + escapeHtml(r.link || sourceUrl(r.fonteId)) + '" target="_blank" rel="noopener">' + escapeHtml(r.titulo) + '</a></td>' +
         '<td>' + (r.secao ? escapeHtml(r.secao) : '—') + '</td>' +
