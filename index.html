@@ -1,874 +1,421 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Monitoria DP</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap">
 <style>
-  :root{
-    --petroleo: #01516A;
-    --petroleo-dark: #012F3D;
-    --petroleo-100: #E4EEF1;
-    --dourado: #C9973A;
-    --dourado-light: #F2E2BE;
-    --alerta: #B24C3A;
-    --alerta-light: #F5DFDA;
-    --bg: #F7F5EF;
-    --card: #FFFFFF;
-    --ink: #1F2A2E;
-    --ink-soft: #5C6B70;
-    --line: #E1DACB;
-    --ok: #2F7A4F;
-    --ok-light: #DCEEE2;
-    --radius: 10px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background:var(--bg);
-    color:var(--ink);
-    font-family:'Montserrat',sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .mono{font-family:'IBM Plex Mono',monospace;}
-  #app{max-width:1180px;margin:0 auto;padding:0 20px 60px;}
+/* Mesa de leitura: faixa teal com o estado da consulta no topo, sumário curto, tabela densa em papel bege. */
+:root{
+  --bg:#F3F1E8; --surface:#FFFFFF; --surface-2:#E2DFD0; --ink:#161616; --ink-2:#4A4A44; --line:#CFCBB8;
+  --teal:#01516A; --teal-ink:#FFFFFF; --terra:#AD4402; --terra-soft:#F4DFD1; --teal-soft:#D5E6EC;
+  --ok:#2F6B3F; --ok-soft:#DCEBDD; --warn:#8A5A00; --warn-soft:#F6E8C3; --bad:#A3261B; --bad-soft:#F6D9D5;
+  --font:'Montserrat',system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101A1E; --surface:#16252B; --surface-2:#1F333B; --ink:#EDEAE0; --ink-2:#AFB8BA; --line:#2C444D;
+  --teal:#2B8FB0; --teal-ink:#06161C; --terra:#E48B55; --terra-soft:#3A2417; --teal-soft:#14343F;
+  --ok:#7FC48F; --ok-soft:#183324; --warn:#E3B95B; --warn-soft:#3A2F12; --bad:#F08A80; --bad-soft:#3E1B18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101A1E; --surface:#16252B; --surface-2:#1F333B; --ink:#EDEAE0; --ink-2:#AFB8BA; --line:#2C444D;
+  --teal:#2B8FB0; --teal-ink:#06161C; --terra:#E48B55; --terra-soft:#3A2417; --teal-soft:#14343F;
+  --ok:#7FC48F; --ok-soft:#183324; --warn:#E3B95B; --warn-soft:#3A2F12; --bad:#F08A80; --bad-soft:#3E1B18; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance}
+a{color:var(--teal)}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--terra);outline-offset:2px}
 
-  /* ===== Header ===== */
-  header.topbar{
-    display:flex;align-items:center;justify-content:space-between;
-    padding:22px 0 18px;flex-wrap:wrap;gap:14px;
-    border-bottom:1px solid var(--line);
-    margin-bottom:24px;
-  }
-  .brand{display:flex;align-items:center;gap:12px;}
-  .brand-mark{
-    width:40px;height:40px;border-radius:9px;
-    background:linear-gradient(135deg,var(--petroleo),var(--petroleo-dark));
-    display:flex;align-items:center;justify-content:center;
-    color:var(--dourado-light);font-weight:800;font-size:15px;letter-spacing:.5px;
-    flex-shrink:0;
-  }
-  .brand h1{font-size:19px;font-weight:800;margin:0;letter-spacing:.2px;color:var(--petroleo-dark);}
-  .brand p{margin:1px 0 0;font-size:11.5px;color:var(--ink-soft);letter-spacing:.4px;text-transform:uppercase;}
+.top{background:var(--teal);color:var(--teal-ink);margin-inline:calc(-1 * max(16px,env(safe-area-inset-left,0px)));
+  padding:20px max(16px,env(safe-area-inset-right,0px)) 18px max(16px,env(safe-area-inset-left,0px))}
+.top .wrap{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between}
+.brand{min-width:0}
+.brand .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;opacity:.8}
+.brand h1{font-size:26px;font-weight:700;margin-top:2px}
+.status{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.status .when{font-size:12px;line-height:1.4}
+.status .when b{display:block;font-size:14px;font-weight:600}
+.pill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;background:rgba(255,255,255,.16)}
+.pill i{width:8px;height:8px;border-radius:50%;background:currentColor;display:inline-block}
+.pill.run i{animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.pill.run i{animation:none}}
+.btn{border:1px solid transparent;border-radius:8px;padding:9px 14px;font-weight:600;font-size:13px}
+.btn.primary{background:var(--terra);color:#fff}
+.btn.primary:disabled{opacity:.55;cursor:default}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--ink)}
+.top .btn.ghost{border-color:rgba(255,255,255,.45);color:var(--teal-ink)}
+.btn.small{padding:5px 9px;font-size:12px}
 
-  .scan-box{display:flex;align-items:center;gap:14px;}
-  .scan-status{text-align:right;}
-  .scan-status .label{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.6px;}
-  .scan-status .value{font-size:13px;font-weight:600;color:var(--petroleo-dark);display:flex;align-items:center;gap:6px;justify-content:flex-end;}
-  .pulse-dot{
-    width:8px;height:8px;border-radius:50%;background:var(--ok);
-    box-shadow:0 0 0 0 rgba(47,122,79,.5);
-    animation:pulse 2.2s infinite;
-  }
-  @media (prefers-reduced-motion: reduce){ .pulse-dot{animation:none;} }
-  @keyframes pulse{
-    0%{box-shadow:0 0 0 0 rgba(47,122,79,.45);}
-    70%{box-shadow:0 0 0 8px rgba(47,122,79,0);}
-    100%{box-shadow:0 0 0 0 rgba(47,122,79,0);}
-  }
-  button{font-family:'Montserrat',sans-serif;cursor:pointer;border:none;}
-  .btn{
-    padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;
-    display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease, box-shadow .12s ease;
-  }
-  .btn:active{transform:translateY(1px);}
-  .btn-primary{background:var(--petroleo);color:#fff;}
-  .btn-primary:hover{box-shadow:0 4px 14px rgba(1,81,106,.28);}
-  .btn-primary:disabled{opacity:.55;cursor:progress;box-shadow:none;}
-  .btn-ghost{background:transparent;color:var(--petroleo-dark);border:1px solid var(--line);}
-  .btn-ghost:hover{border-color:var(--petroleo);}
-  .btn-small{padding:7px 12px;font-size:12px;border-radius:7px;}
+.banner{margin-top:14px;padding:10px 14px;border-radius:8px;background:var(--warn-soft);color:var(--warn);font-size:13px}
+.banner.bad{background:var(--bad-soft);color:var(--bad)}
+.banner.ok{background:var(--ok-soft);color:var(--ok)}
+.banner pre{white-space:pre-wrap;margin:8px 0 0;font:inherit;color:var(--ink);background:var(--surface);padding:10px;border-radius:6px;border:1px solid var(--line)}
 
-  /* ===== Summary cards ===== */
-  .summary-grid{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;
-  }
-  @media (max-width:820px){ .summary-grid{grid-template-columns:repeat(2,1fr);} }
-  .card{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:16px 18px;
-  }
-  .card .k{font-size:10.5px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-soft);font-weight:600;}
-  .card .v{font-size:26px;font-weight:800;color:var(--petroleo-dark);margin-top:6px;font-family:'IBM Plex Mono',monospace;}
-  .card .v small{font-size:13px;font-weight:600;color:var(--ink-soft);}
-  .card.accent .v{color:var(--alerta);}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.card .n{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums}
+.card .l{font-size:12px;color:var(--ink-2)}
+.card.alert .n{color:var(--terra)}
 
-  /* ===== Executive summary ===== */
-  .exec{
-    background:var(--petroleo-dark);color:#fff;border-radius:var(--radius);
-    padding:18px 20px;margin-bottom:22px;
-  }
-  .exec h2{font-size:13px;text-transform:uppercase;letter-spacing:.7px;margin:0 0 12px;color:var(--dourado-light);font-weight:700;}
-  .exec ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px;}
-  .exec li{font-size:13.5px;line-height:1.5;display:flex;gap:10px;align-items:baseline;}
-  .exec li .tag{
-    flex-shrink:0;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;
-    background:rgba(201,151,58,.22);color:var(--dourado-light);text-transform:uppercase;letter-spacing:.4px;
-  }
-  .exec .empty{color:rgba(255,255,255,.65);font-size:13px;}
+.exec{margin-top:16px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.exec h2{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.exec ol{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:8px}
+.exec li{display:flex;gap:10px;align-items:baseline;min-width:0}
+.exec li span.t{min-width:0}
+.exec .empty{color:var(--ink-2)}
 
-  /* ===== Controls ===== */
-  .tabs{display:flex;gap:4px;margin-bottom:14px;}
-  .tab{
-    padding:8px 16px;border-radius:7px;font-size:12.5px;font-weight:600;color:var(--ink-soft);
-    background:transparent;
-  }
-  .tab.active{background:var(--petroleo);color:#fff;}
+.bar{margin-top:20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.bar input,.bar select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);min-width:0}
+.bar input[type=search]{flex:1 1 200px}
+.tabs{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.tabs button{background:var(--surface);color:var(--ink-2);border:0;padding:8px 12px;font-weight:600;font-size:13px}
+.tabs button[aria-pressed=true]{background:var(--teal);color:var(--teal-ink)}
+.spacer{flex:1}
 
-  .controls{
-    display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:14px 16px;margin-bottom:16px;
-  }
-  .filters{display:flex;flex-wrap:wrap;gap:8px;flex:1;}
-  select, input[type="text"], input[type="date"]{
-    font-family:'Montserrat',sans-serif;font-size:12.5px;padding:8px 10px;
-    border:1px solid var(--line);border-radius:7px;background:#fdfcf9;color:var(--ink);
-  }
-  select:focus, input:focus, button:focus-visible{outline:2px solid var(--petroleo);outline-offset:1px;}
-  .search-input{min-width:170px;}
-  .actions{display:flex;gap:8px;flex-wrap:wrap;}
+.tablebox{margin-top:10px;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;min-width:880px}
+th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;text-align:left;color:var(--ink-2);padding:10px 12px;background:var(--surface-2);position:sticky;top:0;font-weight:600}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+td.date{white-space:nowrap;font-variant-numeric:tabular-nums}
+td.tit{min-width:260px;font-weight:600}
+td.tit a{text-decoration:none}
+td.tit a:hover{text-decoration:underline}
+td.res{color:var(--ink-2);min-width:280px;font-size:13px}
+td.act{white-space:nowrap}
+tr.novo td.date{box-shadow:inset 3px 0 0 var(--terra)}
+tr.lido .tit a{font-weight:500}
+.tag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+.tag.alta{background:var(--bad-soft);color:var(--bad)}
+.tag.media{background:var(--warn-soft);color:var(--warn)}
+.tag.baixa{background:var(--teal-soft);color:var(--teal)}
+.src{font-size:11px;color:var(--ink-2);display:block;margin-top:3px;font-weight:500}
+.empty-state{padding:34px 18px;text-align:center;color:var(--ink-2)}
+.foot{margin-top:12px;font-size:12px;color:var(--ink-2)}
 
-  /* ===== Table ===== */
-  .table-wrap{
-    background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    overflow-x:auto;
-  }
-  table{width:100%;border-collapse:collapse;min-width:920px;}
-  thead th{
-    text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;
-    color:var(--ink-soft);font-weight:700;padding:12px 14px;border-bottom:1px solid var(--line);
-    background:#FBFAF6;position:sticky;top:0;
-  }
-  tbody td{
-    padding:13px 14px;font-size:12.8px;border-bottom:1px solid var(--line);vertical-align:top;
-    color:var(--ink);
-  }
-  tbody tr:last-child td{border-bottom:none;}
-  tbody tr:hover{background:#FBFAF6;}
-  tbody tr.is-new td{background:rgba(201,151,58,.06);}
-  .date-cell{font-family:'IBM Plex Mono',monospace;white-space:nowrap;color:var(--ink-soft);}
-  .titulo-cell{max-width:260px;font-weight:600;color:var(--petroleo-dark);}
-  .titulo-cell a{color:inherit;text-decoration:none;}
-  .titulo-cell a:hover{text-decoration:underline;}
-  .resumo-cell{max-width:280px;color:var(--ink-soft);line-height:1.45;}
-  .badge{
-    display:inline-block;padding:3px 9px;border-radius:20px;font-size:10.5px;font-weight:700;
-    text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;
-  }
-  .badge-alta{background:var(--alerta-light);color:var(--alerta);}
-  .badge-media{background:var(--dourado-light);color:#8a651f;}
-  .badge-baixa{background:var(--petroleo-100);color:var(--petroleo);}
-  .badge-tipo{background:#F1F0EA;color:var(--ink-soft);}
-  .row-actions{display:flex;gap:6px;}
-  .icon-btn{
-    background:transparent;border:1px solid var(--line);border-radius:6px;
-    padding:5px 8px;font-size:11px;color:var(--ink-soft);
-  }
-  .icon-btn:hover{border-color:var(--petroleo);color:var(--petroleo-dark);}
-  .empty-state{padding:48px 20px;text-align:center;color:var(--ink-soft);}
-  .empty-state strong{display:block;color:var(--petroleo-dark);font-size:14px;margin-bottom:4px;}
-
-  /* ===== Footer / integration panel ===== */
-  .integration{
-    margin-top:22px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-  }
-  .integration summary{
-    cursor:pointer;padding:14px 18px;font-size:12.5px;font-weight:700;color:var(--petroleo-dark);
-    list-style:none;display:flex;justify-content:space-between;align-items:center;
-  }
-  .integration summary::-webkit-details-marker{display:none;}
-  .integration summary::after{content:'+';font-size:16px;color:var(--ink-soft);}
-  .integration[open] summary::after{content:'–';}
-  .integration .body{padding:0 18px 18px;font-size:12.5px;color:var(--ink-soft);line-height:1.6;}
-  .integration pre{
-    background:var(--petroleo-dark);color:#E4EEF1;padding:14px;border-radius:8px;
-    overflow-x:auto;font-size:11.5px;line-height:1.55;
-  }
-  .integration code{font-family:'IBM Plex Mono',monospace;}
-
-  /* ===== Modal ===== */
-  .modal-overlay{
-    position:fixed;inset:0;background:rgba(1,47,61,.45);display:flex;
-    align-items:center;justify-content:center;padding:20px;z-index:50;
-  }
-  .modal-overlay.hidden{display:none;}
-  .modal{
-    background:#fff;border-radius:12px;max-width:560px;width:100%;max-height:85vh;overflow-y:auto;
-    padding:24px;
-  }
-  .modal h3{margin:0 0 4px;font-size:16px;color:var(--petroleo-dark);}
-  .modal p.sub{margin:0 0 18px;font-size:12.5px;color:var(--ink-soft);}
-  .src-row{
-    display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);
-  }
-  .src-row:last-of-type{border-bottom:none;}
-  .src-row .info{flex:1;min-width:0;}
-  .src-row .name{font-weight:600;font-size:13px;color:var(--ink);}
-  .src-row .url{font-size:11px;color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;word-break:break-all;}
-  .switch{position:relative;width:38px;height:21px;flex-shrink:0;}
-  .switch input{opacity:0;width:0;height:0;}
-  .slider{position:absolute;inset:0;background:#D8D2C2;border-radius:20px;transition:.15s;cursor:pointer;}
-  .slider::before{content:'';position:absolute;width:15px;height:15px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.15s;}
-  input:checked + .slider{background:var(--petroleo);}
-  input:checked + .slider::before{transform:translateX(17px);}
-  .add-src{display:flex;flex-direction:column;gap:8px;margin-top:16px;padding-top:16px;border-top:1px dashed var(--line);}
-  .add-src input{width:100%;}
-  .modal-close-row{display:flex;justify-content:flex-end;margin-top:18px;gap:8px;}
-
-  /* ===== Toast ===== */
-  #toast{
-    position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--petroleo-dark);color:#fff;padding:12px 20px;border-radius:8px;
-    font-size:12.5px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);
-    opacity:0;pointer-events:none;transition:.25s ease;z-index:60;display:flex;align-items:center;gap:8px;
-  }
-  #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-  #toast .dot{width:7px;height:7px;border-radius:50%;background:var(--dourado);flex-shrink:0;}
-
-  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:20;display:flex;align-items:flex-start;justify-content:center;padding:max(16px,env(safe-area-inset-top,0px)) 16px 16px;overflow:auto}
+.modal .box{background:var(--bg);border-radius:12px;max-width:760px;width:100%;padding:18px;margin-top:20px;border:1px solid var(--line)}
+.modal h2{font-size:18px}
+.modal .row{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);min-width:0}
+.modal .row .info{flex:1;min-width:0}
+.modal .row .info b{display:block}
+.modal .row .info a{font-size:12px;word-break:break-all}
+.modal label{display:block;font-size:12px;font-weight:600;margin:12px 0 4px;color:var(--ink-2)}
+.modal input[type=text],.modal input[type=url],.modal textarea{width:100%;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.modal textarea{min-height:70px;resize:vertical}
+.addgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.addgrid .full{grid-column:1/-1}
+@media (max-width:560px){.addgrid{grid-template-columns:1fr}.brand h1{font-size:22px}}
+.modal .actions{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
 </style>
-</head>
-<body>
-<div id="app">
 
-  <header class="topbar">
+<header class="top">
+  <div class="wrap">
     <div class="brand">
-      <div class="brand-mark">DP</div>
-      <div>
-        <h1>Monitoria DP</h1>
-        <p>Rastreio regulatório · legislação trabalhista &amp; previdenciária</p>
-      </div>
+      <div class="kicker">Organiza DP · Radar trabalhista</div>
+      <h1>Monitoria DP</h1>
     </div>
-    <div class="scan-box">
-      <div class="scan-status">
-        <div class="label">Último rastreio</div>
-        <div class="value"><span class="pulse-dot" aria-hidden="true"></span><span id="lastScanText">carregando…</span></div>
-      </div>
-      <button class="btn btn-primary" id="btnScan">Simular rastreio de hoje</button>
+    <div class="status">
+      <div class="when" aria-live="polite"><span id="scanLabel">Última consulta</span><b id="scanWhen">carregando…</b></div>
+      <span class="pill" id="scanPill"><i></i><span id="scanText">—</span></span>
+      <button class="btn primary" id="btnRun" type="button">Consultar agora</button>
+      <button class="btn ghost" id="btnSources" type="button">Fontes e filtros</button>
     </div>
-  </header>
+  </div>
+</header>
 
-  <section class="summary-grid" id="summaryGrid" aria-label="Resumo do monitoramento">
-    <div class="card"><div class="k">Fontes monitoradas</div><div class="v" id="cardFontes">–</div></div>
-    <div class="card"><div class="k">Novas hoje</div><div class="v" id="cardHoje">–</div></div>
-    <div class="card"><div class="k">Últimos 7 dias</div><div class="v" id="cardSemana">–</div></div>
-    <div class="card accent"><div class="k">Alertas prioritários</div><div class="v" id="cardAlertas">–</div></div>
+<main class="wrap">
+  <div id="banners"></div>
+
+  <section class="cards" aria-label="Resumo">
+    <div class="card"><div class="n" id="cWeek">0</div><div class="l">Publicados em 7 dias</div></div>
+    <div class="card"><div class="n" id="cMonth">0</div><div class="l">Publicados em 30 dias</div></div>
+    <div class="card alert"><div class="n" id="cAlta">0</div><div class="l">Prioridade alta (30 dias)</div></div>
+    <div class="card"><div class="n" id="cNovo">0</div><div class="l">Ainda não lidos</div></div>
+    <div class="card"><div class="n" id="cSrc">0</div><div class="l">Fontes ativas</div></div>
   </section>
 
-  <section class="exec" aria-label="Resumo executivo">
-    <h2>Resumo executivo · principais novidades</h2>
-    <ul id="execList"></ul>
+  <section class="exec" aria-labelledby="execT">
+    <h2 id="execT">Resumo executivo · últimos 30 dias</h2>
+    <ol id="execList"></ol>
   </section>
 
-  <div class="tabs" role="tablist" aria-label="Filtrar por status">
-    <button class="tab active" data-status="ativos" id="tabAtivos">Ativos</button>
-    <button class="tab" data-status="arquivados" id="tabArquivados">Arquivados</button>
+  <div class="bar">
+    <div class="tabs" role="group" aria-label="Situação">
+      <button type="button" id="tabAtivos" aria-pressed="true">Ativos</button>
+      <button type="button" id="tabArq" aria-pressed="false">Arquivados</button>
+    </div>
+    <input type="search" id="fQ" placeholder="Buscar título, órgão ou resumo" aria-label="Buscar">
+    <select id="fFonte" aria-label="Fonte"><option value="">Todas as fontes</option></select>
+    <select id="fTipo" aria-label="Tipo">
+      <option value="">Todos os tipos</option><option value="legislacao">Legislação</option><option value="norma">Norma / regra</option>
+      <option value="procedimento">Procedimento</option><option value="noticia">Notícia</option><option value="decisao">Decisão judicial</option>
+    </select>
+    <select id="fPrio" aria-label="Prioridade"><option value="">Qualquer prioridade</option><option value="alta">Alta</option><option value="media">Média</option><option value="baixa">Baixa</option></select>
+    <select id="fPer" aria-label="Período"><option value="7">7 dias</option><option value="30" selected>30 dias</option><option value="90">90 dias</option><option value="365">12 meses</option><option value="0">Tudo</option></select>
+    <span class="spacer"></span>
+    <button class="btn ghost small" id="btnCsv" type="button">Exportar CSV</button>
+    <button class="btn ghost small" id="btnJson" type="button">Exportar JSON</button>
   </div>
 
-  <section class="controls">
-    <div class="filters">
-      <input type="text" class="search-input" id="fSearch" placeholder="Buscar por título, órgão ou palavra-chave…">
-      <select id="fTipo">
-        <option value="">Todos os tipos</option>
-        <option value="legislacao">Legislação</option>
-        <option value="norma">Norma</option>
-        <option value="procedimento">Procedimento</option>
-        <option value="noticia">Notícia</option>
-      </select>
-      <select id="fFonte">
-        <option value="">Todas as fontes</option>
-      </select>
-      <select id="fPrioridade">
-        <option value="">Todas as prioridades</option>
-        <option value="alta">Alta</option>
-        <option value="media">Média</option>
-        <option value="baixa">Baixa</option>
-      </select>
-      <input type="date" id="fDe" aria-label="Data inicial">
-      <input type="date" id="fAte" aria-label="Data final">
-    </div>
-    <div class="actions">
-      <button class="btn btn-ghost btn-small" id="btnSources">Fontes monitoradas</button>
-      <button class="btn btn-ghost btn-small" id="btnExportCsv">Exportar CSV</button>
-      <button class="btn btn-ghost btn-small" id="btnExportJson">Exportar JSON</button>
-    </div>
-  </section>
-
-  <div class="table-wrap">
+  <div class="tablebox">
     <table>
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Órgão</th>
-          <th>Título</th>
-          <th>Seção</th>
-          <th>Tipo</th>
-          <th>Prioridade</th>
-          <th>Resumo</th>
-          <th><span class="sr-only">Ações</span></th>
-        </tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
+      <thead><tr><th>Data</th><th>Órgão</th><th>Título</th><th>Seção</th><th>Prioridade</th><th>Resumo</th><th>Link</th><th></th></tr></thead>
+      <tbody id="rows"></tbody>
     </table>
-    <div class="empty-state hidden" id="emptyState">
-      <strong>Nenhum registro encontrado</strong>
-      Ajuste os filtros ou execute um novo rastreio para simular publicações.
-    </div>
+    <div class="empty-state" id="emptyState" hidden></div>
   </div>
+  <p class="foot" id="foot"></p>
+</main>
 
-  <details class="integration">
-    <summary>Integração com automação (Zapier · Make · n8n · Power Automate)</summary>
-    <div class="body">
-      Este painel exibe uma simulação do rastreio diário: como artefatos HTML não têm agendador próprio, a checagem
-      às 8h precisa ser disparada por uma automação externa. As publicações carregadas aqui são reais — coletadas
-      diretamente das 6 fontes monitoradas — e cada link leva exatamente à página onde a publicação foi divulgada.
-      "Simular rastreio" só reordena a data de detecção como se o rastreio tivesse ocorrido agora; a data de
-      publicação e o link de cada item permanecem os originais. A estrutura de dados abaixo é normalizada e pronta
-      para ser gerada por uma automação real e consumida por este mesmo painel (via exportação JSON) ou por outra
-      ferramenta interna.
-      <pre><code>{
-  "id": "string",
-  "dataPublicacao": "YYYY-MM-DD",
-  "dataDeteccao": "YYYY-MM-DDTHH:mm:ssZ",
-  "fonteId": "esocial-noticias | credito-trabalhador | fgts-digital | fgts-digital-faq | esocial-faq | dou",
-  "orgao": "string",
-  "titulo": "string",
-  "secao": "Seção 1 | Seção 2 | null",
-  "url": "string",
-  "resumo": "string (2-3 linhas, impacto para o DP)",
-  "tipo": "legislacao | norma | procedimento | noticia",
-  "prioridade": "alta | media | baixa",
-  "palavrasChave": ["string"],
-  "status": "novo | lido | arquivado"
-}</code></pre>
-      Sugestão de fluxo: agendar a automação para 8h → raspar/consultar as 6 fontes → aplicar o filtro de órgãos e
-      palavras-chave do Diário Oficial → gravar os registros novos neste formato → importar via "Exportar/Importar JSON".
-    </div>
-  </details>
-
-</div>
-
-<div class="modal-overlay hidden" id="sourcesModal">
-  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <h3 id="modalTitle">Fontes monitoradas</h3>
-    <p class="sub">Ative, desative ou adicione portais para o rastreio.</p>
-    <div id="sourcesList"></div>
-    <form class="add-src" id="addSourceForm">
-      <input type="text" id="newSrcName" placeholder="Nome da fonte" required>
-      <input type="text" id="newSrcOrgao" placeholder="Órgão responsável" required>
-      <input type="text" id="newSrcUrl" placeholder="URL (https://…)" required>
-      <button type="submit" class="btn btn-primary btn-small">Adicionar fonte</button>
+<div class="modal" id="modal" hidden>
+  <div class="box" role="dialog" aria-modal="true" aria-labelledby="mT">
+    <h2 id="mT">Fontes e filtros</h2>
+    <p class="foot">A consulta lê esta lista. Ligue, desligue ou adicione sites aqui e a próxima consulta já usa a nova configuração.</p>
+    <div id="srcList"></div>
+    <form id="addForm" class="addgrid" style="margin-top:14px">
+      <div><label for="nName">Nome da fonte</label><input type="text" id="nName" required placeholder="Ex.: TST notícias"></div>
+      <div><label for="nOrg">Órgão</label><input type="text" id="nOrg" required placeholder="Ex.: TST"></div>
+      <div class="full"><label for="nUrl">Endereço (https)</label><input type="url" id="nUrl" required placeholder="https://"></div>
+      <div class="full"><button class="btn primary" type="submit">Adicionar fonte</button></div>
     </form>
-    <div class="modal-close-row">
-      <button class="btn btn-ghost btn-small" id="btnCloseModal">Fechar</button>
-    </div>
+    <label for="kw">Palavras-chave de relevância (separadas por vírgula)</label>
+    <textarea id="kw"></textarea>
+    <label for="og">Órgãos de interesse no DOU (separados por vírgula)</label>
+    <input type="text" id="og">
+    <div class="actions"><button class="btn ghost" id="mClose" type="button">Fechar</button><button class="btn primary" id="mSave" type="button">Salvar filtros</button></div>
   </div>
 </div>
-
-<div id="toast" role="status" aria-live="polite"><span class="dot"></span><span id="toastMsg"></span></div>
 
 <script>
 (function(){
-  "use strict";
+'use strict';
+var TRIGGER_ID='trig_01NbK4eb4LSMrr1vGEbfuUBk';
+var CONNECTOR='Claude Code Remote';
+var $=function(id){return document.getElementById(id)};
+var S={reports:[],sources:[],scan:null,config:null,db:null,mcp:null,dl:null,tab:'ativos',got:{r:false,s:false,m:false},busy:false};
 
-  var DEFAULT_SOURCES = [
-    {id:'esocial-noticias', nome:'Notícias eSocial', orgao:'eSocial', url:'https://www.gov.br/esocial/pt-br/noticias', ativo:true},
-    {id:'credito-trabalhador', nome:'Crédito do Trabalhador', orgao:'MTE', url:'https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/credito-do-trabalhador/empregador/', ativo:true},
-    {id:'fgts-digital', nome:'FGTS Digital', orgao:'MTE', url:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital', ativo:true},
-    {id:'fgts-digital-faq', nome:'FAQ FGTS Digital', orgao:'MTE', url:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/perguntas-frequentes', ativo:true},
-    {id:'esocial-faq', nome:'FAQ eSocial', orgao:'eSocial', url:'https://www.gov.br/esocial/pt-br/empresas/perguntas-frequentes/perguntas-frequentes-producao-empresas-e-ambiente-de-testes', ativo:true},
-    {id:'dou', nome:'Diário Oficial da União', orgao:'Imprensa Nacional', url:'https://www.gov.br/imprensanacional/pt-br', ativo:true},
-    {id:'constituicao', nome:'Constituição Federal', orgao:'Planalto', url:'https://www.planalto.gov.br/ccivil_03/constituicao/constituicao.htm', ativo:true},
-    {id:'clt', nome:'CLT (Decreto-Lei 5.452)', orgao:'Planalto', url:'https://www.planalto.gov.br/ccivil_03/decreto-lei/del5452compilado.htm', ativo:true},
-    {id:'senado', nome:'Senado Federal', orgao:'Senado Federal', url:'https://www12.senado.leg.br/', ativo:true},
-    {id:'stf', nome:'STF', orgao:'STF', url:'https://portal.stf.jus.br/', ativo:true}
-  ];
+function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function safeUrl(u){u=String(u||'');return /^https:\/\//i.test(u)?u:''}
+function pad(n){return n<10?'0'+n:''+n}
+function isoDay(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function daysAgo(n){var d=new Date();d.setDate(d.getDate()-n);return isoDay(d)}
+function fmtDate(s){if(!s)return '—';var p=String(s).slice(0,10).split('-');return p.length===3?p[2]+'/'+p[1]+'/'+p[0]:s}
+function fmtDT(s){if(!s)return '—';var d=new Date(s);if(isNaN(d))return '—';return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear()+' às '+pad(d.getHours())+':'+pad(d.getMinutes())}
+var TIPO={legislacao:'Legislação',norma:'Norma / regra',procedimento:'Procedimento',noticia:'Notícia',decisao:'Decisão judicial'};
+function srcName(id){for(var i=0;i<S.sources.length;i++)if(S.sources[i].id===id)return S.sources[i].nome;return id||'—'}
+function srcUrl(id){for(var i=0;i<S.sources.length;i++)if(S.sources[i].id===id)return S.sources[i].url;return ''}
 
-  var DOU_KEYWORDS = ["previdência social","INSS","RGPS","RPPS","benefício previdenciário","aposentadoria",
-    "auxílio-doença","salário-maternidade","pensão por morte","CRPS","MPS","trabalho","MTP","MTE","NR","CLT",
-    "segurança do trabalho","FAP","eSocial","FGTS","Resolução do TST"];
-  var DOU_ORGAOS = ["MPS","INSS","CRPS","MTP","MTE","SRTE"];
+function banner(id,cls,html){var el=$('banners');var old=$('bn-'+id);if(old)old.remove();if(!html)return;var d=document.createElement('div');d.id='bn-'+id;d.className='banner '+(cls||'');d.innerHTML=html;el.appendChild(d)}
 
-  // Pool of example publications used to simulate new findings on each scan.
-  var SEED_POOL = [
-    {fonteId:'esocial-noticias', orgao:'eSocial', titulo:'Ferramentas Download e Relatórios Gerenciais apresentam instabilidade', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Alguns pedidos de download e de relatórios gerenciais não estão retornando resultados, e outros apresentam erro ao gerar os arquivos.', palavrasChave:['eSocial'], dataPublicacao:'2026-08-27', link:'https://www.gov.br/esocial/pt-br/noticias/ferramentas-download-e-relatorios-gerenciais-apresentam-instabilidade'},
-    {fonteId:'esocial-noticias', orgao:'eSocial', titulo:'Parada do eSocial em 31/07/2026: manutenção programada para implantação do CNPJ alfanumérico', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Parada programada do sistema para viabilizar a implantação do novo formato de CNPJ alfanumérico. Todos os módulos foram impactados durante a janela de manutenção.', palavrasChave:['eSocial'], dataPublicacao:'2026-07-30', link:'https://www.gov.br/esocial/pt-br/noticias/parada-do-esocial-em-31-07-2026-19h-manutencao-programada-para-implantacao-do-cnpj-alfanumerico'},
-    {fonteId:'esocial-noticias', orgao:'Receita Federal', titulo:'Antecipação de atividades para implantação do CNPJ Alfanumérico', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Antecipação de etapas técnicas altera o período de disponibilidade da base do CNPJ, mantendo inalteradas as demais condições previstas para a implantação do novo formato.', palavrasChave:['eSocial'], dataPublicacao:'2026-07-15', link:'https://www.gov.br/esocial/pt-br/noticias/receita-federal/antecipacao-de-atividades-para-implantacao-do-cnpj-alfanumerico'},
-    {fonteId:'credito-trabalhador', orgao:'MTE', titulo:'Comunicado - Orientações adicionais sobre a implantação da funcionalidade de garantias no Crédito do Trabalhador', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Orientações complementares sobre o funcionamento das garantias oferecidas pelo trabalhador nas operações do Programa Crédito do Trabalhador.', palavrasChave:['MTE','trabalho'], dataPublicacao:'2026-07-02', link:'https://www.gov.br/esocial/pt-br/noticias/comunicado-orientacoes-adicionais-sobre-a-implantacao-da-funcionalidade-de-garantias-no-credito-do-trabalhador'},
-    {fonteId:'esocial-noticias', orgao:'eSocial', titulo:'eSocial atualiza cálculo de contribuições previdenciárias conforme Lei Complementar nº 224/2025', secao:null, tipo:'norma', prioridade:'alta', resumo:'Novas alíquotas passam a ser aplicadas automaticamente a partir da competência 04/2026, sem necessidade de ação dos empregadores.', palavrasChave:['eSocial','previdência social'], dataPublicacao:'2026-04-01', link:'https://www.gov.br/esocial/pt-br/noticias/esocial-atualiza-calculo-de-contribuicoes-previdenciarias-conforme-lei-complementar-no-224-2025'},
-    {fonteId:'esocial-noticias', orgao:'MPS', titulo:'Liberado o envio de eventos de folha para o eSocial após publicação de portaria que reajusta valores previdenciários em 2026', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'A Portaria Interministerial MPS/MF nº 13/2026 reajustou salários de contribuição, benefícios e demais valores da Previdência, incluindo o salário-família. Empregadores já podem transmitir a folha de janeiro/2026.', palavrasChave:['eSocial','MPS','previdência social'], dataPublicacao:'2026-01-13', link:'https://www.gov.br/esocial/pt-br/noticias/liberado-o-envio-de-eventos-de-folha-para-o-esocial-apos-publicacao-de-portaria-que-reajusta-valores-previdenciarios-em-2026-1'},
-    {fonteId:'esocial-noticias', orgao:'eSocial', titulo:'Novo salário mínimo 2026: veja como registrar o reajuste no eSocial Doméstico', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Salário mínimo foi reajustado para R$ 1.621,00 a partir de 1º de janeiro. Orientações sobre como refletir o novo valor no módulo Doméstico.', palavrasChave:['eSocial'], dataPublicacao:'2026-01-02', link:'https://www.gov.br/esocial/pt-br/noticias/novo-salario-minimo-2026-veja-como-registrar-o-reajuste-no-esocial-domestico'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'Recolhimentos de FGTS em processos trabalhistas serão efetuados via FGTS Digital a partir de maio/2026', secao:null, tipo:'procedimento', prioridade:'alta', resumo:'Empresas devem adequar seus processos internos, bem como a interação com assessorias contábeis e jurídicas, para o novo fluxo de recolhimento.', palavrasChave:['FGTS','MTE'], dataPublicacao:'2026-04-02', link:'https://www.gov.br/esocial/pt-br/noticias/ministerio-do-trabalho-e-emprego/recolhimentos-de-fgts-em-processos-trabalhistas-serao-efetuados-via-fgts-digital-a-partir-de-maio-2026'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'FGTS Digital inicia o recebimento de valores de empréstimos consignados vencidos', secao:null, tipo:'procedimento', prioridade:'media', resumo:'A partir da competência de fevereiro/2026, os valores de consignado retidos e vencidos deverão ser pagos via FGTS Digital.', palavrasChave:['FGTS'], dataPublicacao:'2026-03-20', link:'https://www.gov.br/esocial/pt-br/noticias/ministerio-do-trabalho-e-emprego/fgts-digital-inicia-o-recebimento-de-valores-de-emprestimos-consignados-vencidos'},
-    {fonteId:'credito-trabalhador', orgao:'MTE', titulo:'eSocial implanta nova validação para descontos de empréstimo consignado do Programa Crédito do Trabalhador', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Nova validação aponta divergências entre os dados informados nos descontos da parcela do empréstimo, permitindo melhor controle pelos empregadores.', palavrasChave:['MTE'], dataPublicacao:'2025-10-08', link:'https://www.gov.br/esocial/pt-br/noticias/esocial-implanta-nova-validacao-para-descontos-de-emprestimo-consignado-do-programa-credito-do-trabalhador'},
-    {fonteId:'esocial-noticias', orgao:'eSocial', titulo:'Dataprev realiza manutenção em seu ambiente de recepção de eventos do eSocial', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Durante o período de manutenção os eventos do eSocial não foram internalizados no CNIS, sendo incorporados automaticamente depois.', palavrasChave:['eSocial'], dataPublicacao:'2026-05-22', link:'https://www.gov.br/esocial/pt-br/noticias/dataprev-realiza-manutencao-em-seu-ambiente-de-recepcao-de-eventos-do-esocial'},
-    {fonteId:'esocial-noticias', orgao:'Receita Federal', titulo:'Indisponibilidade do sistema DCTFWeb', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Sistema ficou indisponível por 12 horas, com reflexos no eSocial durante o período.', palavrasChave:['eSocial'], dataPublicacao:'2026-04-17', link:'https://www.gov.br/esocial/pt-br/noticias/indisponibilidade-do-sistema-dctfweb'},
-    {fonteId:'credito-trabalhador', orgao:'MTE', titulo:'Entra em vigor a funcionalidade que permite ao trabalhador ofertar garantias nas operações do Crédito do Trabalhador, por meio da CTPS Digital', secao:null, tipo:'procedimento', prioridade:'alta', resumo:'A partir das 14h de 26/06/2026, passou a vigorar a possibilidade de o trabalhador ofertar garantias via CTPS Digital e canais próprios das instituições financeiras.', palavrasChave:['MTE','trabalho'], dataPublicacao:'2026-06-26', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/comunicados/entra-em-vigor-a-funcionalidade-que-permitira-ao-trabalhador-ofertar-garantias-nas-operacoes-do-credito-do-trabalhador-por-meio-da-ctps-digital'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'Início do período de adesão do Parcelamento Especial do FGTS para empregadores de municípios de Minas Gerais', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Empregadores com estabelecimentos em Juiz de Fora, Matias Barbosa e Ubá podem parcelar em até seis vezes débitos do FGTS referentes a abril–julho/2026.', palavrasChave:['FGTS','MTE'], dataPublicacao:'2026-09-01', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/comunicados/parcelamento-especial-do-fgts-adesao-comeca-em-1o-de-setembro-para-empregadores-de-municipios-de-minas-gerais'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'Manutenção programada: indisponibilidade do FGTS Digital das 08h às 19h', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Sistema ficou indisponível por manutenção programada durante o dia informado. Sem impacto em prazos legais já definidos.', palavrasChave:['FGTS'], dataPublicacao:'2026-08-02', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/comunicados/02-08-2026-manutencao-programada-indisponibilidade-do-fgts-digital-das-08h00-ate-as-19h00'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'Publicada a Versão 1.70 do Manual do FGTS Digital', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Nova versão do manual operacional traz atualizações de orientações técnicas para os empregadores.', palavrasChave:['FGTS'], dataPublicacao:'2026-06-12', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/fgts-digital/resolveuid/c2fcd8188365464e87eac2cc062f32d6'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'Publicada Nota Orientativa para Situação de Contingência nº 05/2026', secao:null, tipo:'procedimento', prioridade:'media', resumo:'Nota orientativa define procedimentos a adotar em caso de contingência no FGTS Digital, relevante para empregadores com risco de atraso no recolhimento.', palavrasChave:['FGTS'], dataPublicacao:'2026-06-01', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/manual-e-documentacao-tecnica/sei_8572427_nota-orientativa-para-situacao-de-contingencia-05-2026.pdf'},
-    {fonteId:'fgts-digital', orgao:'MTE', titulo:'Nota Orientativa nº 11/2025: FGTS no 13º salário no mês da rescisão', secao:null, tipo:'procedimento', prioridade:'alta', resumo:'Orientação sobre o recolhimento do FGTS incidente sobre o 13º salário quando pago no mesmo mês da rescisão contratual. Relevante para o fechamento de rescisões.', palavrasChave:['FGTS'], dataPublicacao:'2025-12-12', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/manual-e-documentacao-tecnica/nota-orientativa-fd-11-2025-13-e-rescisao.pdf'},
-    {fonteId:'credito-trabalhador', orgao:'MTE', titulo:'Publicada a versão 2.0 do Manual Operacional do Empregador - Programa Crédito do Trabalhador', secao:null, tipo:'procedimento', prioridade:'baixa', resumo:'Atualização do manual operacional com orientações revisadas para os empregadores participantes do programa.', palavrasChave:['MTE'], dataPublicacao:'2025-05-16', link:'https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/manual-e-documentacao-tecnica-old/manual-operacional-do-empregador-programa-credito-do-trabalhador-v2-16-05-25.pdf'},
-    {fonteId:'dou', orgao:'MPS', titulo:'Portaria Interministerial MPS/MF nº 13, de 9 de janeiro de 2026', secao:'Seção 1', tipo:'legislacao', prioridade:'alta', resumo:'Reajusta em 3,90% os benefícios pagos pelo INSS e atualiza a tabela de contribuição do RGPS, o teto previdenciário e o salário-família para 2026.', palavrasChave:['MPS','INSS','RGPS','previdência social','aposentadoria'], dataPublicacao:'2026-01-12', link:'https://www.in.gov.br/web/dou/-/portaria-interministerial-mps/mf-n-13-de-9-de-janeiro-de-2026-680382603'},
-    {fonteId:'dou', orgao:'MTE', titulo:'Portaria MTE nº 1.419, de 27 de agosto de 2024', secao:'Seção 1', tipo:'legislacao', prioridade:'alta', resumo:'Aprova nova redação do capítulo 1.5 (Gerenciamento de Riscos Ocupacionais) e altera o Anexo I da NR-1, incluindo os riscos psicossociais relacionados ao trabalho.', palavrasChave:['NR','MTE','trabalho'], dataPublicacao:'2024-08-28', link:'https://www.gov.br/trabalho-e-emprego/pt-br/assuntos/inspecao-do-trabalho/seguranca-e-saude-no-trabalho/sst-portarias/2024/portaria-mte-no-1-419-nr-01-gro-nova-redacao.pdf'},
-    {fonteId:'dou', orgao:'MTE', titulo:'Edital nº 3/2025 (FGTS Digital)', secao:'Seção 3', tipo:'procedimento', prioridade:'baixa', resumo:'Publicação de edital relacionado ao FGTS Digital no Diário Oficial da União.', palavrasChave:['FGTS','MTE'], dataPublicacao:'2025-11-27', link:'https://www.in.gov.br/web/dou/-/edital-n-3/2025-671495834'},
-    {fonteId:'constituicao', orgao:'Congresso Nacional', titulo:'Emenda Constitucional nº 141/2026 — fim progressivo da escala 6x1', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'Promulgada em 16/10/2026, altera o art. 7º da Constituição para reduzir progressivamente a jornada semanal máxima a 40 horas e garantir ao trabalhador dois dias de descanso remunerado por semana, extinguindo a escala 6x1. Impacto direto no controle de jornada e nas escalas de trabalho.', palavrasChave:['trabalho','CLT'], dataPublicacao:'2026-10-16', link:'https://legis.senado.leg.br/norma/44184944/publicacao/44189027'},
-    {fonteId:'senado', orgao:'Senado Federal', titulo:'CCJ aprova relatório favorável à PEC do fim da escala 6x1', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'Comissão de Constituição e Justiça do Senado aprovou parecer favorável à proposta de emenda constitucional que extingue a jornada de trabalho no regime 6x1, etapa anterior à promulgação da EC 141/2026.', palavrasChave:['trabalho','CLT'], dataPublicacao:'2026-08-27', link:'https://www12.senado.leg.br/noticias/materias/2026/08/27/pec-do-fim-da-escala-6x1-ja-conta-com-relatorio-favoravel-na-ccj'},
-    {fonteId:'stf', orgao:'STF', titulo:'STF retira suspensão de processos sobre pejotização na 1ª instância e nos TRTs', secao:null, tipo:'legislacao', prioridade:'alta', resumo:'Ministro Gilmar Mendes retirou a suspensão nacional de processos que discutem a validade de contratos de pessoa jurídica (pejotização) em primeira instância e nos Tribunais Regionais do Trabalho, liberando o andamento de ações sobre reconhecimento de vínculo empregatício.', palavrasChave:['trabalho','CLT'], dataPublicacao:'2026-06-18', link:'https://noticias.stf.jus.br/postsnoticias/stf-retira-suspensao-de-processos-sobre-pejotizacao-na-primeira-instancia-e-nos-trts/'}
-  ];
+/* ---------- filtros ---------- */
+function filtered(tab){
+  var q=$('fQ').value.trim().toLowerCase(),f=$('fFonte').value,t=$('fTipo').value,p=$('fPrio').value,per=parseInt($('fPer').value,10);
+  var since=per?daysAgo(per):'';
+  return S.reports.filter(function(r){
+    var arq=r.status==='arquivado';
+    if((tab||S.tab)==='ativos'?arq:!arq)return false;
+    if(f&&r.fonteId!==f)return false;
+    if(t&&r.tipo!==t)return false;
+    if(p&&r.prioridade!==p)return false;
+    if(since&&String(r.dataPublicacao||'')<since)return false;
+    if(q){var h=((r.titulo||'')+' '+(r.orgao||'')+' '+(r.resumo||'')).toLowerCase();if(h.indexOf(q)<0)return false}
+    return true;
+  });
+}
 
-  var SOURCE_NAME = {};
-  var storageReady = true;
-
-  // ---------- storage helpers ----------
-  async function storageGet(key){
-    try{
-      var r = await window.storage.get(key, false);
-      return r ? JSON.parse(r.value) : null;
-    }catch(e){ return null; }
-  }
-  async function storageSet(key, value){
-    try{
-      await window.storage.set(key, JSON.stringify(value), false);
-      return true;
-    }catch(e){ storageReady = false; return false; }
-  }
-
-  // ---------- state ----------
-  var state = {
-    sources: [],
-    reports: [],
-    lastScan: null,
-    statusTab: 'ativos',
-    filters: {search:'', tipo:'', fonte:'', prioridade:'', de:'', ate:''}
-  };
-
-  function todayISO(offsetDays){
-    var d = new Date();
-    d.setDate(d.getDate() + (offsetDays||0));
-    return d.toISOString().slice(0,10);
-  }
-
-  function uid(){
-    return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-  }
-
-  function classifyPriority(item){
-    // Re-derive priority for DOU items using mandatory keyword/órgão filter; keep seed priority as baseline otherwise.
-    if(item.fonteId !== 'dou') return item.prioridade;
-    var text = (item.titulo + ' ' + item.resumo).toLowerCase();
-    var kwHits = DOU_KEYWORDS.filter(function(k){return text.indexOf(k.toLowerCase()) !== -1;}).length;
-    var orgaoHit = DOU_ORGAOS.indexOf(item.orgao) !== -1;
-    if(item.secao === 'Seção 2' && kwHits === 0) return 'baixa';
-    if(orgaoHit && kwHits >= 1) return item.prioridade === 'alta' ? 'alta' : 'media';
-    return item.prioridade;
-  }
-
-  // Bump this whenever SEED_POOL's content changes in a way that should replace
-  // whatever a browser already has saved (e.g. swapping placeholder data for real
-  // publications). Browsers on an older version get their reports rebuilt from the
-  // current SEED_POOL instead of keeping their stale saved data.
-  var DATA_VERSION = 'real-publications-v2';
-
-  function buildInitialReports(){
-    // Build an initial history using each publication's real date. The most recent
-    // real items are pre-loaded as already-tracked history; older ones stay in the
-    // pool so "Simular rastreio" can surface them as newly detected.
-    var sorted = SEED_POOL.slice().sort(function(a,b){ return b.dataPublicacao.localeCompare(a.dataPublicacao); });
-    return sorted.slice(0, 10).map(function(item, idx){
-      return Object.assign({}, item, {
-        id: uid(),
-        dataDeteccao: item.dataPublicacao + 'T08:05:00',
-        prioridade: classifyPriority(item),
-        status: idx < 2 ? 'novo' : 'lido'
-      });
+/* ---------- render ---------- */
+function renderSummary(){
+  var w=daysAgo(7),m=daysAgo(30);
+  var act=S.reports.filter(function(r){return r.status!=='arquivado'});
+  $('cWeek').textContent=act.filter(function(r){return r.dataPublicacao>=w}).length;
+  var mon=act.filter(function(r){return r.dataPublicacao>=m});
+  $('cMonth').textContent=mon.length;
+  $('cAlta').textContent=mon.filter(function(r){return r.prioridade==='alta'}).length;
+  $('cNovo').textContent=act.filter(function(r){return r.status==='novo'}).length;
+  $('cSrc').textContent=S.sources.filter(function(s){return s.ativo!==false}).length;
+  var ord={alta:0,media:1,baixa:2};
+  var top=mon.slice().sort(function(a,b){return (ord[a.prioridade]-ord[b.prioridade])||String(b.dataPublicacao).localeCompare(a.dataPublicacao)}).slice(0,5);
+  var ol=$('execList');ol.textContent='';
+  if(!top.length){var li=document.createElement('li');li.className='empty';li.textContent=S.got.r?'Nenhuma publicação relevante nos últimos 30 dias. Use "Consultar agora" para buscar novidades.':'Carregando…';ol.appendChild(li);return}
+  top.forEach(function(r){
+    var li=document.createElement('li');
+    li.innerHTML='<span class="tag '+esc(r.prioridade)+'">'+esc(r.prioridade)+'</span><span class="t">'+esc(r.titulo)+' <span class="src" style="display:inline">· '+esc(r.orgao)+', '+fmtDate(r.dataPublicacao)+'</span></span>';
+    ol.appendChild(li);
+  });
+}
+function renderFonteSelect(){
+  var sel=$('fFonte'),cur=sel.value;sel.textContent='';
+  var o=document.createElement('option');o.value='';o.textContent='Todas as fontes';sel.appendChild(o);
+  S.sources.forEach(function(s){var x=document.createElement('option');x.value=s.id;x.textContent=s.nome;sel.appendChild(x)});
+  sel.value=cur;
+}
+function renderTable(){
+  var list=filtered();
+  list.sort(function(a,b){return String(b.dataPublicacao).localeCompare(String(a.dataPublicacao))});
+  var tb=$('rows');tb.textContent='';
+  list.forEach(function(r){
+    var tr=document.createElement('tr');tr.className=r.status==='novo'?'novo':(r.status==='lido'?'lido':'');
+    var link=safeUrl(r.link)||safeUrl(srcUrl(r.fonteId));
+    tr.innerHTML=
+      '<td class="date">'+fmtDate(r.dataPublicacao)+'</td>'+
+      '<td>'+esc(r.orgao)+'</td>'+
+      '<td class="tit">'+(link?'<a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">'+esc(r.titulo)+'</a>':esc(r.titulo))+
+        '<span class="src">'+esc(srcName(r.fonteId))+' · '+esc(TIPO[r.tipo]||r.tipo||'')+'</span></td>'+
+      '<td>'+(r.secao?esc(r.secao):'—')+'</td>'+
+      '<td><span class="tag '+esc(r.prioridade)+'">'+esc(r.prioridade||'—')+'</span></td>'+
+      '<td class="res">'+esc(r.resumo)+'</td>'+
+      '<td>'+(link?'<a href="'+esc(link)+'" target="_blank" rel="noopener noreferrer">Abrir</a>':'—')+'</td>'+
+      '<td class="act"></td>';
+    var act=tr.lastChild;
+    var b1=document.createElement('button');b1.type='button';b1.className='btn ghost small';
+    b1.textContent=r.status==='novo'?'Marcar lido':(S.tab==='arquivados'?'Restaurar':'Arquivar');
+    b1.addEventListener('click',function(){
+      var next=r.status==='novo'?'lido':(S.tab==='arquivados'?'lido':'arquivado');
+      setStatus(r.id,next);
     });
+    act.appendChild(b1);
+    tb.appendChild(tr);
+  });
+  var es=$('emptyState');
+  if(!list.length){
+    es.hidden=false;
+    es.textContent=!S.got.r?'Carregando publicações…':(S.reports.length?'Nenhuma publicação com esses filtros.':'Ainda não há publicações. Clique em "Consultar agora" para eu buscar nas suas fontes.');
+  }else es.hidden=true;
+  $('foot').textContent=list.length+' publicação(ões) exibida(s). Datas são as da publicação oficial na fonte.';
+}
+function renderScan(){
+  var sc=S.scan||{},pill=$('scanPill'),btn=$('btnRun');
+  var running=sc.status==='running';
+  var stale=running&&sc.startedAt&&(Date.now()-new Date(sc.startedAt).getTime()>40*60000);
+  $('scanWhen').textContent=sc.finishedAt?fmtDT(sc.finishedAt):'ainda não consultado';
+  pill.className='pill'+(running&&!stale?' run':'');
+  if(running&&!stale){$('scanText').textContent='Consultando as fontes… pode levar alguns minutos';btn.disabled=true;btn.textContent='Consultando…'}
+  else{
+    btn.disabled=S.busy;btn.textContent='Consultar agora';
+    if(stale)$('scanText').textContent='Sem resposta da última consulta';
+    else if(sc.finishedAt)$('scanText').textContent=(sc.novos||0)+' novidade(s) na última consulta';
+    else $('scanText').textContent='Aguardando a primeira consulta';
   }
+  if(sc.nota&&!running)banner('nota','ok',esc(sc.nota));else banner('nota','','');
+}
+function renderAll(){renderFonteSelect();renderSummary();renderTable();renderScan()}
 
-  async function seedIfEmpty(){
-    var sources = await storageGet('sources');
-    var reports = await storageGet('reports');
-    var lastScan = await storageGet('lastScan');
-    var dataVersion = await storageGet('dataVersion');
+/* ---------- escrita ---------- */
+async function setStatus(id,status){
+  if(!S.db)return;
+  try{await S.db.doc('reports/'+id).update({status:status})}catch(e){banner('w','bad','Não foi possível salvar a alteração ('+esc(e&&e.code||'erro')+').')}
+}
+async function consultar(){
+  if(!S.mcp){fallback();return}
+  S.busy=true;$('btnRun').disabled=true;
+  var prev=S.scan||{};
+  try{
+    await S.db.doc('meta/scan').set(Object.assign({},prev,{status:'running',startedAt:new Date().toISOString(),origem:'manual'}));
+    await S.mcp.callTool(CONNECTOR,'fire_trigger',{trigger_id:TRIGGER_ID,text:'Rodada manual disparada pelo painel Monitoria DP. Siga as instruções do prompt e grave tudo no banco do artefato.'});
+    banner('run','ok','Consulta iniciada. Estou pesquisando as fontes ativas; o painel atualiza sozinho quando terminar.');
+  }catch(e){
+    try{await S.db.doc('meta/scan').set(Object.assign({},prev,{status:'idle'}))}catch(_){}
+    var c=e&&e.code;
+    if(c==='not_granted'||c==='blocked_by_policy'||c==='server_not_connected'||c==='tool_not_found')fallback();
+    else banner('run','bad','Não consegui iniciar a consulta ('+esc(c||'erro')+'). Tente de novo em instantes ou use o pedido manual abaixo.');
+  }
+  S.busy=false;renderScan();
+}
+function fallback(){
+  var ativos=S.sources.filter(function(s){return s.ativo!==false}).map(function(s){return '- '+s.nome+': '+s.url}).join('\n');
+  var txt='Rode a Monitoria DP agora: pesquise as fontes abaixo, ache publicações novas de impacto em DP/trabalhista (últimos 7 dias), confirme cada link e grave no banco do artefato do painel Monitoria DP.\n'+ativos;
+  banner('run','','Este painel não conseguiu acionar a consulta sozinho aqui. Copie o pedido e envie no chat do Claude:<pre id="pedido"></pre><button class="btn ghost small" id="btnCopy" type="button" style="margin-top:8px">Copiar pedido</button>');
+  $('pedido').textContent=txt;
+  $('btnCopy').addEventListener('click',function(){
+    var b=this;
+    (navigator.clipboard&&navigator.clipboard.writeText?navigator.clipboard.writeText(txt):Promise.reject()).then(function(){b.textContent='Copiado'}).catch(function(){var r=document.createRange();r.selectNodeContents($('pedido'));var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selecionado, use Ctrl+C'});
+  });
+}
 
-    if(!sources){
-      sources = DEFAULT_SOURCES.slice();
-      await storageSet('sources', sources);
+/* ---------- fontes e filtros ---------- */
+function openModal(){
+  renderSrcList();
+  var c=S.config||{};
+  $('kw').value=(c.keywords||[]).join(', ');
+  $('og').value=(c.orgaos||[]).join(', ');
+  $('modal').hidden=false;
+}
+function renderSrcList(){
+  var box=$('srcList');box.textContent='';
+  S.sources.forEach(function(s){
+    var row=document.createElement('div');row.className='row';
+    var u=safeUrl(s.url);
+    row.innerHTML='<input type="checkbox" '+(s.ativo!==false?'checked':'')+' aria-label="Ativar '+esc(s.nome)+'"><div class="info"><b>'+esc(s.nome)+' <span class="src" style="display:inline">· '+esc(s.orgao)+'</span></b>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener noreferrer">'+esc(u)+'</a>':'')+'</div><button type="button" class="btn ghost small">Remover</button>';
+    row.firstChild.addEventListener('change',function(){S.db.doc('sources/'+s.id).update({ativo:this.checked}).catch(function(){})});
+    row.lastChild.addEventListener('click',function(){S.db.doc('sources/'+s.id).delete().catch(function(){})});
+    box.appendChild(row);
+  });
+}
+function slug(t){return t.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'').slice(0,60)||('f'+Date.now())}
+function splitList(v){return v.split(',').map(function(x){return x.trim()}).filter(Boolean)}
+
+/* ---------- exportar ---------- */
+function csvCell(v){v=String(v==null?'':v);return /[",\n;]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+async function exportar(kind){
+  if(!S.dl){banner('dl','','Exportar não está disponível neste modo de exibição.');return}
+  var list=filtered();
+  try{
+    if(kind==='csv'){
+      var head=['Data','Órgão','Título','Seção','Prioridade','Fonte','Link','Resumo'];
+      var lines=[head.join(';')].concat(list.map(function(r){return [fmtDate(r.dataPublicacao),r.orgao,r.titulo,r.secao||'',r.prioridade,srcName(r.fonteId),r.link||'',r.resumo].map(csvCell).join(';')}));
+      await S.dl.save({filename:'monitoria-dp-'+isoDay(new Date())+'.csv',data:'﻿'+lines.join('\n')});
+    }else{
+      await S.dl.save({filename:'monitoria-dp-'+isoDay(new Date())+'.json',data:JSON.stringify(list,null,2)});
     }
+  }catch(e){}
+}
 
-    if(!reports || dataVersion !== DATA_VERSION){
-      // Either first run, or this browser's saved data predates the current
-      // SEED_POOL (e.g. it still has the old placeholder/example publications).
-      // Rebuild from scratch so stale fictional data doesn't linger.
-      reports = buildInitialReports();
-      await storageSet('reports', reports);
-      await storageSet('dataVersion', DATA_VERSION);
-    }
-
-    if(!lastScan){
-      lastScan = todayISO(-1) + 'T08:00:00';
-      await storageSet('lastScan', lastScan);
-    }
-
-    state.sources = sources;
-    state.reports = reports;
-    state.lastScan = lastScan;
-  }
-
-  // ---------- rendering ----------
-  function fmtDate(iso){
-    if(!iso) return '—';
-    var parts = iso.slice(0,10).split('-');
-    return parts[2] + '/' + parts[1] + '/' + parts[0];
-  }
-  function fmtDateTime(iso){
-    if(!iso) return '—';
-    var d = new Date(iso);
-    if(isNaN(d.getTime())) return iso;
-    return fmtDate(iso.slice(0,10)) + ' às ' + iso.slice(11,16);
-  }
-
-  function activeSourceIds(){
-    return state.sources.filter(function(s){return s.ativo;}).map(function(s){return s.id;});
-  }
-
-  function populateFonteFilter(){
-    var sel = document.getElementById('fFonte');
-    var current = sel.value;
-    sel.innerHTML = '<option value="">Todas as fontes</option>';
-    state.sources.forEach(function(s){
-      SOURCE_NAME[s.id] = s.nome;
-      var opt = document.createElement('option');
-      opt.value = s.id; opt.textContent = s.nome;
-      sel.appendChild(opt);
-    });
-    sel.value = current || '';
-  }
-
-  function filteredReports(){
-    var f = state.filters;
-    return state.reports.filter(function(r){
-      if(state.statusTab === 'ativos' && r.status === 'arquivado') return false;
-      if(state.statusTab === 'arquivados' && r.status !== 'arquivado') return false;
-      if(f.tipo && r.tipo !== f.tipo) return false;
-      if(f.fonte && r.fonteId !== f.fonte) return false;
-      if(f.prioridade && r.prioridade !== f.prioridade) return false;
-      if(f.de && r.dataPublicacao < f.de) return false;
-      if(f.ate && r.dataPublicacao > f.ate) return false;
-      if(f.search){
-        var hay = (r.titulo + ' ' + r.orgao + ' ' + r.resumo + ' ' + (r.palavrasChave||[]).join(' ')).toLowerCase();
-        if(hay.indexOf(f.search.toLowerCase()) === -1) return false;
-      }
-      return true;
-    }).sort(function(a,b){ return b.dataPublicacao.localeCompare(a.dataPublicacao) || b.dataDeteccao.localeCompare(a.dataDeteccao); });
-  }
-
-  function renderSummary(){
-    document.getElementById('cardFontes').innerHTML = activeSourceIds().length + '<small> / ' + state.sources.length + '</small>';
-    var today = todayISO(0);
-    var weekAgo = todayISO(-7);
-    var hoje = state.reports.filter(function(r){return r.dataDeteccao.slice(0,10) === today;}).length;
-    var semana = state.reports.filter(function(r){return r.dataDeteccao.slice(0,10) >= weekAgo;}).length;
-    var alertas = state.reports.filter(function(r){return r.prioridade === 'alta' && r.status !== 'arquivado';}).length;
-    document.getElementById('cardHoje').textContent = hoje;
-    document.getElementById('cardSemana').textContent = semana;
-    document.getElementById('cardAlertas').textContent = alertas;
-    document.getElementById('lastScanText').textContent = state.lastScan ? fmtDateTime(state.lastScan) : '—';
-  }
-
-  function renderExecSummary(){
-    var list = document.getElementById('execList');
-    var weekAgo = todayISO(-7);
-    // Uses the same criterion as the summary cards above (detection date, not the
-    // publication's original date): this is what the tracker found recently, which
-    // is what "new" means for a monitoring tool, even when the underlying publication
-    // itself is older. Keeping both in sync avoids showing "4 novas hoje" in the cards
-    // right next to "nenhuma novidade" here.
-    var top = state.reports
-      .filter(function(r){return r.status !== 'arquivado' && r.dataDeteccao.slice(0,10) >= weekAgo;})
-      .sort(function(a,b){
-        var order = {alta:0, media:1, baixa:2};
-        return order[a.prioridade]-order[b.prioridade] || b.dataDeteccao.localeCompare(a.dataDeteccao);
-      })
-      .slice(0,5);
-    list.innerHTML = '';
-    if(top.length === 0){
-      list.innerHTML = '<li class="empty">Nenhuma novidade relevante nos últimos 7 dias. Execute um rastreio para simular publicações.</li>';
-      return;
-    }
-    top.forEach(function(r){
-      var li = document.createElement('li');
-      li.innerHTML = '<span class="tag">' + r.prioridade + '</span><span>' + escapeHtml(r.titulo) + ' <span style="color:rgba(255,255,255,.6)">— ' + escapeHtml(r.orgao) + ', publicado em ' + fmtDate(r.dataPublicacao) + '</span></span>';
-      list.appendChild(li);
-    });
-  }
-
-  function escapeHtml(s){
-    var d = document.createElement('div');
-    d.textContent = s == null ? '' : s;
-    return d.innerHTML;
-  }
-
-  function renderTable(){
-    var rows = filteredReports();
-    var tbody = document.getElementById('tableBody');
-    var empty = document.getElementById('emptyState');
-    tbody.innerHTML = '';
-    if(rows.length === 0){
-      empty.classList.remove('hidden');
-      return;
-    }
-    empty.classList.add('hidden');
-    var today = todayISO(0);
-    rows.forEach(function(r){
-      var tr = document.createElement('tr');
-      if(r.dataDeteccao.slice(0,10) === today && r.status === 'novo') tr.className = 'is-new';
-      var tipoLabel = {legislacao:'Legislação', norma:'Norma', procedimento:'Procedimento', noticia:'Notícia'}[r.tipo] || r.tipo;
-      var prioClass = 'badge-' + r.prioridade;
-      var detectadoTitle = 'Detectado em ' + fmtDateTime(r.dataDeteccao);
-      tr.innerHTML =
-        '<td class="date-cell" title="' + escapeHtml(detectadoTitle) + '">' + fmtDate(r.dataPublicacao) + '</td>' +
-        '<td>' + escapeHtml(r.orgao) + '</td>' +
-        '<td class="titulo-cell"><a href="' + escapeHtml(r.link || sourceUrl(r.fonteId)) + '" target="_blank" rel="noopener">' + escapeHtml(r.titulo) + '</a></td>' +
-        '<td>' + (r.secao ? escapeHtml(r.secao) : '—') + '</td>' +
-        '<td><span class="badge badge-tipo">' + tipoLabel + '</span></td>' +
-        '<td><span class="badge ' + prioClass + '">' + r.prioridade + '</span></td>' +
-        '<td class="resumo-cell">' + escapeHtml(r.resumo) + '</td>' +
-        '<td></td>';
-      var actionsTd = tr.lastElementChild;
-      var wrap = document.createElement('div');
-      wrap.className = 'row-actions';
-      if(r.status !== 'arquivado'){
-        if(r.status === 'novo'){
-          var readBtn = document.createElement('button');
-          readBtn.className = 'icon-btn'; readBtn.textContent = 'Marcar lido';
-          readBtn.onclick = function(){ setStatus(r.id, 'lido'); };
-          wrap.appendChild(readBtn);
-        }
-        var archBtn = document.createElement('button');
-        archBtn.className = 'icon-btn'; archBtn.textContent = 'Arquivar';
-        archBtn.onclick = function(){ setStatus(r.id, 'arquivado'); };
-        wrap.appendChild(archBtn);
-      } else {
-        var restoreBtn = document.createElement('button');
-        restoreBtn.className = 'icon-btn'; restoreBtn.textContent = 'Reativar';
-        restoreBtn.onclick = function(){ setStatus(r.id, 'lido'); };
-        wrap.appendChild(restoreBtn);
-      }
-      actionsTd.appendChild(wrap);
-      tbody.appendChild(tr);
-    });
-  }
-
-  function sourceUrl(fonteId){
-    var s = state.sources.find(function(x){return x.id === fonteId;});
-    return s ? s.url : '#';
-  }
-
-  async function setStatus(id, status){
-    var r = state.reports.find(function(x){return x.id === id;});
-    if(!r) return;
-    r.status = status;
-    await storageSet('reports', state.reports);
-    renderAll();
-  }
-
-  function renderSourcesModal(){
-    var list = document.getElementById('sourcesList');
-    list.innerHTML = '';
-    state.sources.forEach(function(s){
-      var row = document.createElement('div');
-      row.className = 'src-row';
-      row.innerHTML =
-        '<label class="switch"><input type="checkbox" ' + (s.ativo ? 'checked' : '') + ' data-id="' + s.id + '"><span class="slider"></span></label>' +
-        '<div class="info"><div class="name">' + escapeHtml(s.nome) + ' <span style="color:var(--ink-soft);font-weight:400;">· ' + escapeHtml(s.orgao) + '</span></div><div class="url">' + escapeHtml(s.url) + '</div></div>';
-      list.appendChild(row);
-      row.querySelector('input').addEventListener('change', async function(e){
-        s.ativo = e.target.checked;
-        await storageSet('sources', state.sources);
-        renderSummary();
-        populateFonteFilter();
-      });
-    });
-  }
-
-  function renderAll(){
-    populateFonteFilter();
-    renderSummary();
-    renderExecSummary();
-    renderTable();
-  }
-
-  // ---------- scan simulation ----------
-  async function simulateScan(){
-    var btn = document.getElementById('btnScan');
-    btn.disabled = true;
-    var originalText = btn.textContent;
-    btn.textContent = 'Rastreando fontes…';
-
-    await new Promise(function(res){ setTimeout(res, 900); });
-
-    var active = activeSourceIds();
-    var existingTitles = state.reports.map(function(r){return r.titulo;});
-    var candidates = SEED_POOL.filter(function(item){
-      return active.indexOf(item.fonteId) !== -1 && existingTitles.indexOf(item.titulo) === -1;
-    });
-
-    var howMany = Math.min(candidates.length, 1 + Math.floor(Math.random()*3));
-    var picked = [];
-    var pool = candidates.slice();
-    for(var i=0;i<howMany;i++){
-      var idx = Math.floor(Math.random()*pool.length);
-      picked.push(pool.splice(idx,1)[0]);
-    }
-
-    var now = new Date();
-    var nowIso = todayISO(0) + 'T' + now.toTimeString().slice(0,5) + ':00';
-
-    picked.forEach(function(item){
-      state.reports.push(Object.assign({}, item, {
-        id: uid(),
-        dataDeteccao: nowIso,
-        prioridade: classifyPriority(item),
-        status: 'novo'
-      }));
-    });
-
-    state.lastScan = nowIso;
-    await storageSet('reports', state.reports);
-    await storageSet('lastScan', state.lastScan);
-
-    btn.disabled = false;
-    btn.textContent = originalText;
-    renderAll();
-
-    if(picked.length === 0){
-      showToast('Rastreio concluído: nenhuma publicação nova nas fontes ativas.');
-    } else {
-      var altas = picked.filter(function(p){return classifyPriority(p) === 'alta';}).length;
-      showToast('Rastreio concluído: ' + picked.length + ' nova(s) publicação(ões)' + (altas ? ', ' + altas + ' de prioridade alta' : '') + '.');
-    }
-  }
-
-  var toastTimer = null;
-  function showToast(msg){
-    var el = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    el.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 4200);
-  }
-
-  // ---------- export ----------
-  function downloadBlob(content, filename, type){
-    var blob = new Blob([content], {type:type});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url; a.download = filename;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  function exportCsv(){
-    var rows = filteredReports();
-    var header = ['Data','Orgao','Titulo','Secao','Link','Resumo','Tipo','Prioridade'];
-    var lines = [header.join(';')];
-    rows.forEach(function(r){
-      var line = [
-        fmtDate(r.dataPublicacao), r.orgao, r.titulo, r.secao || '', (r.link || sourceUrl(r.fonteId)), r.resumo, r.tipo, r.prioridade
-      ].map(function(v){
-        v = String(v == null ? '' : v).replace(/"/g,'""');
-        return '"' + v + '"';
-      });
-      lines.push(line.join(';'));
-    });
-    downloadBlob(lines.join('\n'), 'monitoria-dp-' + todayISO(0) + '.csv', 'text/csv;charset=utf-8;');
-    showToast('CSV exportado com ' + rows.length + ' registro(s).');
-  }
-
-  function exportJson(){
-    var rows = filteredReports().map(function(r){
-      return Object.assign({}, r, {url: r.link || sourceUrl(r.fonteId)});
-    });
-    downloadBlob(JSON.stringify(rows, null, 2), 'monitoria-dp-' + todayISO(0) + '.json', 'application/json');
-    showToast('JSON exportado com ' + rows.length + ' registro(s).');
-  }
-
-  // ---------- events ----------
-  function bindEvents(){
-    document.getElementById('btnScan').addEventListener('click', simulateScan);
-
-    document.getElementById('tabAtivos').addEventListener('click', function(){ switchTab('ativos'); });
-    document.getElementById('tabArquivados').addEventListener('click', function(){ switchTab('arquivados'); });
-
-    ['fSearch','fTipo','fFonte','fPrioridade','fDe','fAte'].forEach(function(id){
-      var el = document.getElementById(id);
-      var evt = (id === 'fSearch') ? 'input' : 'change';
-      el.addEventListener(evt, function(){
-        state.filters.search = document.getElementById('fSearch').value;
-        state.filters.tipo = document.getElementById('fTipo').value;
-        state.filters.fonte = document.getElementById('fFonte').value;
-        state.filters.prioridade = document.getElementById('fPrioridade').value;
-        state.filters.de = document.getElementById('fDe').value;
-        state.filters.ate = document.getElementById('fAte').value;
-        renderTable();
-      });
-    });
-
-    document.getElementById('btnExportCsv').addEventListener('click', exportCsv);
-    document.getElementById('btnExportJson').addEventListener('click', exportJson);
-
-    document.getElementById('btnSources').addEventListener('click', function(){
-      renderSourcesModal();
-      document.getElementById('sourcesModal').classList.remove('hidden');
-    });
-    document.getElementById('btnCloseModal').addEventListener('click', function(){
-      document.getElementById('sourcesModal').classList.add('hidden');
-    });
-    document.getElementById('sourcesModal').addEventListener('click', function(e){
-      if(e.target.id === 'sourcesModal') document.getElementById('sourcesModal').classList.add('hidden');
-    });
-
-    document.getElementById('addSourceForm').addEventListener('submit', async function(e){
-      e.preventDefault();
-      var nome = document.getElementById('newSrcName').value.trim();
-      var orgao = document.getElementById('newSrcOrgao').value.trim();
-      var url = document.getElementById('newSrcUrl').value.trim();
-      if(!nome || !orgao || !url) return;
-      var id = nome.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || uid();
-      state.sources.push({id:id, nome:nome, orgao:orgao, url:url, ativo:true});
-      await storageSet('sources', state.sources);
-      this.reset();
-      renderSourcesModal();
-      populateFonteFilter();
-      renderSummary();
-      showToast('Fonte "' + nome + '" adicionada ao monitoramento.');
-    });
-  }
-
-  function switchTab(tab){
-    state.statusTab = tab;
-    document.getElementById('tabAtivos').classList.toggle('active', tab === 'ativos');
-    document.getElementById('tabArquivados').classList.toggle('active', tab === 'arquivados');
-    renderTable();
-  }
-
-  // ---------- init ----------
-  async function init(){
-    await seedIfEmpty();
-    bindEvents();
-    renderAll();
-    if(!storageReady){
-      showToast('Aviso: não foi possível salvar os dados. As alterações valem só para esta sessão.');
-    }
-  }
-
-  init();
+/* ---------- init ---------- */
+function bind(){
+  ['fQ','fFonte','fTipo','fPrio','fPer'].forEach(function(id){$(id).addEventListener(id==='fQ'?'input':'change',renderTable)});
+  $('tabAtivos').addEventListener('click',function(){S.tab='ativos';$('tabAtivos').setAttribute('aria-pressed','true');$('tabArq').setAttribute('aria-pressed','false');renderTable()});
+  $('tabArq').addEventListener('click',function(){S.tab='arquivados';$('tabAtivos').setAttribute('aria-pressed','false');$('tabArq').setAttribute('aria-pressed','true');renderTable()});
+  $('btnRun').addEventListener('click',consultar);
+  $('btnSources').addEventListener('click',openModal);
+  $('mClose').addEventListener('click',function(){$('modal').hidden=true});
+  $('modal').addEventListener('click',function(e){if(e.target===$('modal'))$('modal').hidden=true});
+  $('btnCsv').addEventListener('click',function(){exportar('csv')});
+  $('btnJson').addEventListener('click',function(){exportar('json')});
+  $('addForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    var nome=$('nName').value.trim(),org=$('nOrg').value.trim(),url=$('nUrl').value.trim();
+    if(!nome||!org||!safeUrl(url))return;
+    S.db.doc('sources/'+slug(nome)).set({nome:nome,orgao:org,url:url,ativo:true}).then(function(){$('addForm').reset()}).catch(function(){banner('w','bad','Não foi possível adicionar a fonte.')});
+  });
+  $('mSave').addEventListener('click',function(){
+    S.db.doc('config/filtros').set({keywords:splitList($('kw').value),orgaos:splitList($('og').value)}).then(function(){$('modal').hidden=true}).catch(function(){banner('w','bad','Não foi possível salvar os filtros.')});
+  });
+}
+async function start(){
+  bind();renderAll();
+  var c=window.claude;
+  if(!c||!c.use){banner('db','bad','Abra este painel pelo claude.ai para carregar os dados.');return}
+  var r=await Promise.all([c.use('db'),c.use('mcp'),c.use('downloads')]);
+  S.db=r[0];S.mcp=r[1];S.dl=r[2];
+  if(!S.db){banner('db','bad','Entre na sua conta do Claude para ver e atualizar os dados deste painel.');$('btnRun').disabled=true;return}
+  var timer=setTimeout(function(){if(!S.got.r)banner('db','','Os dados ainda não responderam. Verifique a conexão; o painel continua tentando.')},10000);
+  var fail=function(e){clearTimeout(timer);banner('db','bad','Não foi possível ler os dados ('+esc(e&&e.code||'erro')+').')};
+  S.db.collection('reports').orderBy('dataPublicacao','desc').limit(600).onSnapshot(function(q){
+    clearTimeout(timer);banner('db','','');
+    S.reports=q.docs.map(function(d){return Object.assign({id:d.id},d.data())});S.got.r=true;renderSummary();renderTable();
+  },fail);
+  S.db.collection('sources').onSnapshot(function(q){
+    S.sources=q.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return (a.ordem||99)-(b.ordem||99)});S.got.s=true;renderFonteSelect();renderSummary();renderTable();if(!$('modal').hidden)renderSrcList();
+  },fail);
+  S.db.doc('meta/scan').onSnapshot(function(d){S.scan=d.exists?d.data():null;S.got.m=true;renderScan()},fail);
+  S.db.doc('config/filtros').onSnapshot(function(d){S.config=d.exists?d.data():null},fail);
+}
+start();
 })();
 </script>
-</body>
-</html>
+
+</body></html>
